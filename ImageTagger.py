@@ -2,51 +2,51 @@ import piexif
 import pandas as pd
 import os 
 from os import listdir
+from math import nan, isnan
+
+#fields to tag images with
+tagfields = ['COUNTRY', 'FAMILY', 'HOMETSTAT', 'TYPEOF', 'MAJORAREA']
 
 ##read csv as dataframe
-df = pd.read_csv("Keywords.csv")
-#print(df)
+csvpath = "C:\\temp\\Herbarium mass digitization project\\ImageTaggingExperiments"
+csvfile = 'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
+fullpath = os.path.join(csvpath, csvfile)
+df = pd.read_csv(fullpath)
+print(df.shape[0], 'records read from', csvfile)
+
+
+#image_dir = "C:\temp\Herbarium mass digitization project\ImageTaggingExperiments"
+image_dir = csvpath
+
 
 ##read in images from directory
-image_dir = "C:\DevProjects\ImageTagging\TaggingProject_Images"
-#for images in os.listdir(image_dir):
-    #if (images.endswith)(".jpg"):
-        #print(images)
-
-##try first add tags to single image
-#file = "BOL0044784.jpg"
-#exif_dict = piexif.load(file)
-#print(exif_dict)
-#keywords = "; ".join([df.loc[0][1], df.loc[0][2], df.loc[0][11]])
-#exif_dict["0th"][piexif.ImageIFD.XPKeywords] = keywords.encode("utf-16le") 
-#piexif.insert(piexif.dump(exif_dict), file)
-
-##iterate through dataframe 
-#for index, row in df.iterrows():
-    #print(row[0])
-
-##list filenames in directory
-#for filename in os.listdir(image_dir):
-    #print(filename)
-    
-##try tagging multiple images with same info
-#for images in os.listdir(image_dir):
-    #if (images.endswith)(".jpg"):
-        #print(images)
-        #exif_dict = piexif.load(images)
-        #print(exif_dict)
-        #keywords = "; ".join([df.loc[0][1], df.loc[0][2], df.loc[0][11]])
-        #exif_dict["0th"][piexif.ImageIFD.XPKeywords] = keywords.encode("utf-16le") 
-        #piexif.insert(piexif.dump(exif_dict), images)
-
+images = os.listdir(image_dir)
+count = 0
 #tag multiple images with unique keywords
-for images in os.listdir(image_dir):
-    if (images.endswith)(".jpg"):
-        #print(images)
-        exif_dict = piexif.load(images)
-        #print(exif_dict)
-    for index, row in df.iterrows():
-        keywords = "; ".join([df.loc[index][1], df.loc[index][2], df.loc[index][11]])
-        #print(keywords)
-    exif_dict["0th"][piexif.ImageIFD.XPKeywords] = keywords.encode("utf-16le") 
-    piexif.insert(piexif.dump(exif_dict), images)
+for image in images:
+    if (image.endswith)(".jpg"):
+
+        #get the exif data
+        imagepath = os.path.join(image_dir, image)
+        exif_dict = piexif.load(imagepath)
+
+        #get the keywords
+        imagerecord = df.loc[df['BARCODE'] == image.replace('.jpg', '')]
+        keywords = []
+        for field in tagfields:
+            keywords.append(imagerecord[field].values[0])
+ 
+        #filter out nans
+        keywords = [x for x in keywords if str(x) != 'nan' and x != None]
+        #tag the image
+        keywordsstring = "; ".join(keywords)
+        exif_dict["0th"][piexif.ImageIFD.XPKeywords] = keywordsstring.encode("utf-16le") 
+        new_exif = piexif.dump(exif_dict)
+        piexif.insert(new_exif, imagepath)
+        
+        #print 
+        count += 1
+        if(count % 10 == 0):
+            print(count, 'images tagged')
+
+print('all done')
