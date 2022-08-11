@@ -2,7 +2,17 @@ import pandas as pd
 import os 
 
 #fields to tag images with
-tagfields = ['COUNTRY', 'FAMILY', 'HOMETSTAT', 'TYPEOF', 'MAJORAREA']
+tagfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME',  'HOMETSTAT']
+titlefield = "BARCODE"
+captionfield = "HOMETYPE"
+copyright = "South African National Biodiversity Institute"
+license = 'CC BY 4.0'
+licenseurl = "https://creativecommons.org/licenses/by/4.0/"
+rights = "Free to use for any purpose, including commercial purposes, with attribution. See License and AttributionName"
+attribution = "South African National Biodiversity Institute"
+attributionURL = "https://www.sanbi.org/"
+
+#TODO add sensitive column
 
 fileext = '.tif'
 
@@ -37,23 +47,23 @@ for image in images:
             recordsnotfound.append(image)
             continue
 
+        title = imagerecord[titlefield].values[0]
+        caption = imagerecord[captionfield].values[0]
         keywords = []
         for field in tagfields:
             keywords.append(imagerecord[field].values[0])
+
+        keywords.append(license)
  
         #filter out nans/empty values
         keywords = [x for x in keywords if str(x) != 'nan' and x != None]
         #tag the image
         keywordsstring = ",".join(keywords)
 
-        exiftoolcmd = f'exiftool -Keywords="{keywordsstring}" -copyright="SANBI" "{imagepath}"'
+        exiftoolcmd = f'exiftool -title="{title}" -caption="{caption}" -copyright="{copyright}" -license="{licenseurl}" -usageterms="{rights}" -attributionname="{attribution}" -attributionurl="{attributionURL}" -xmp:subject="{keywordsstring}" -sep ","  -overwrite_original "{imagepath}"'
         os.system(exiftoolcmd)
         
-        # exif_dict["0th"][piexif.ImageIFD.XPKeywords] = keywordsstring.encode("utf-16le") 
-        # new_exif = piexif.dump(exif_dict)
-        # piexif.insert(new_exif, imagepath)
-        
-        #print 
+        #show progress
         count += 1
         if(count % 10 == 0):
             print(count, 'images tagged')
