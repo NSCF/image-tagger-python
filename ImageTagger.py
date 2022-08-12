@@ -60,7 +60,7 @@ for image in images:
         #tag the image
         keywordsstring = ",".join(keywords)
 
-        exiftoolcmd = f'exiftool -title="{title}" -caption="{caption}" -copyright="{copyright}" -license="{licenseurl}" -usageterms="{rights}" -attributionname="{attribution}" -attributionurl="{attributionURL}" -xmp:subject="{keywordsstring}" -sep ","  -overwrite_original "{imagepath}"'
+        exiftoolcmd = f'exiftool -title="{title}" -xmp:description="{caption}" -copyright="{copyright}" -license="{licenseurl}" -usageterms="{rights}" -attributionname="{attribution}" -attributionurl="{attributionURL}" -xmp:subject="{keywordsstring}" -sep ","  -overwrite_original "{imagepath}"'
         os.system(exiftoolcmd)
         
         #show progress
