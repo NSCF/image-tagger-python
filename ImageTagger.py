@@ -1,5 +1,13 @@
+import subprocess
 import pandas as pd
 import os 
+from time import sleep, time, strftime, gmtime
+import re
+
+#TODO: move to subprocess. 
+#see https://realpython.com/python-subprocess/
+#see https://docs.python.org/3/library/subprocess.html
+#see https://stackoverflow.com/a/22198788/3210158
 
 #This uses ExifTool: https://exiftool.org
 #Make sure ExifTool is installed and available on your PATH first...
@@ -35,10 +43,23 @@ image_dir = csvpath
 
 #THE SCRIPT
 
+start = time()
+print('Starting with image tagging...')
+
 #read the data file
 fullpath = os.path.join(csvpath, csvfile)
 df = pd.read_csv(fullpath)
 print(df.shape[0], 'records read from', csvfile)
+
+#create the exiftool process
+try:
+    exiftool = subprocess.Popen(['exiftool', '-stay_open', 'True', '-@', '-', '-common_args', '-overwrite_original'], 
+        stdin = subprocess.PIPE, 
+        stdout = subprocess.PIPE)
+except FileNotFoundError as e:
+    print('ExifTool was not found on this system. Please make sure it is installed and available on the PATH')
+    print('Bye bye...')
+    exit()
 
 ##loop through the images and add tags
 images = os.listdir(image_dir)
@@ -47,7 +68,7 @@ recordsnotfound = []
 for image in images:
     if (image.endswith)(fileext):
 
-        #get the exif data
+        #the full file name and path
         imagepath = os.path.join(image_dir, image)
 
         #get the keywords
@@ -71,10 +92,14 @@ for image in images:
         if sensitivefield:
             keywords.append(imagerecord[sensitivefield].values[0])
 
-        keywords.append(license)
-        keywords.append(collectiontype)
-        keywords.append(collectionname)
-        keywords.append(collectiontype)
+        if license:
+            keywords.append(license)
+        if collectiontype:
+            keywords.append(collectiontype)
+        if collectionname:
+            keywords.append(collectionname)
+        if collectioncode:
+            keywords.append(collectioncode)
  
         #filter out nans/empty values and trim values
         keywords = [x for x in keywords if str(x) != 'nan' and x!= None and x.strip() != '']
@@ -83,13 +108,27 @@ for image in images:
         keywordsstring = ",".join(keywords)
         
         #tag the image
-        exiftoolcmd = f'exiftool -title="{title}" -xmp:description="{caption}" -copyright="{copyright}" -license="{licenseurl}" -usageterms="{rights}" -attributionname="{attribution}" -attributionurl="{attributionURL}" -xmp:subject="{keywordsstring}" -sep ","  -overwrite_original "{imagepath}"'
-        os.system(exiftoolcmd)
-        
-        #show progress
+        exiftoolcmd = f'-title={title}{os.linesep} -xmp:description={caption}{os.linesep} -copyright={copyright}{os.linesep} -license={licenseurl}{os.linesep} -usageterms={rights}{os.linesep} -attributionname={attribution}{os.linesep} -attributionurl={attributionURL}{os.linesep} -xmp:subject={keywordsstring}{os.linesep} -sep{os.linesep} ,{os.linesep} {imagepath}{os.linesep} -execute{count}{os.linesep}'
+        encodedcmd = exiftoolcmd.encode('utf-8')
+        exiftool.stdin.write(encodedcmd)
+
         count += 1
-        if(count % 10 == 0):
-            print(count, 'images tagged')
+
+#finish the process
+print('finishing up...')
+endcmd = f'-stay_open{os.linesep}0{os.linesep}'
+encmdencoded = endcmd.encode('utf-8')
+exiftool.stdin.write(encmdencoded)
+exiftool.stdin.flush()
+while exiftool.poll() == None:
+    sleep(5)
+    message = exiftool.stdout.read1().decode('utf-8')
+    nums = re.findall('\d+', message)
+    print(nums[-1], 'images tagged', end='\r', flush = True)
+
+end = time()
+totaltime = strftime("%H:%M:%S", gmtime(end - start))
+print(count, 'images tagged in', totaltime)
 
 #print any images where records not found in the dataset
 if len(recordsnotfound) > 0:
