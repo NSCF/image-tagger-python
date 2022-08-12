@@ -4,11 +4,6 @@ import os
 from time import sleep, time, strftime, gmtime
 import re
 
-#TODO: move to subprocess. 
-#see https://realpython.com/python-subprocess/
-#see https://docs.python.org/3/library/subprocess.html
-#see https://stackoverflow.com/a/22198788/3210158
-
 #This uses ExifTool: https://exiftool.org
 #Make sure ExifTool is installed and available on your PATH first...
 
@@ -44,6 +39,7 @@ image_dir = csvpath
 #THE SCRIPT
 
 start = time()
+print()
 print('Starting with image tagging...')
 
 #read the data file
@@ -52,6 +48,13 @@ df = pd.read_csv(fullpath)
 print(df.shape[0], 'records read from', csvfile)
 
 #create the exiftool process
+#For using subprocess see:
+#see https://realpython.com/python-subprocess/
+#see https://docs.python.org/3/library/subprocess.html
+#see https://stackoverflow.com/a/22198788/3210158
+
+#For running exiftool as a subprocess see -execute and -stay_open here:
+#https://exiftool.org/exiftool_pod.html#Advanced-options
 try:
     exiftool = subprocess.Popen(['exiftool', '-stay_open', 'True', '-@', '-', '-common_args', '-overwrite_original'], 
         stdin = subprocess.PIPE, 
@@ -111,6 +114,8 @@ for image in images:
         exiftoolcmd = f'-title={title}{os.linesep} -xmp:description={caption}{os.linesep} -copyright={copyright}{os.linesep} -license={licenseurl}{os.linesep} -usageterms={rights}{os.linesep} -attributionname={attribution}{os.linesep} -attributionurl={attributionURL}{os.linesep} -xmp:subject={keywordsstring}{os.linesep} -sep{os.linesep} ,{os.linesep} {imagepath}{os.linesep} -execute{count}{os.linesep}'
         encodedcmd = exiftoolcmd.encode('utf-8')
         exiftool.stdin.write(encodedcmd)
+
+
 
         count += 1
 
