@@ -1,24 +1,31 @@
+# A basic script for tagging specimen images with selected data as keywords, e.g. country, taxon name, etc, 
+# as well tags for copyright, license, etc.
+
+# This script uses ExifTool.
+# Make sure ExifTool is installed and available on your PATH first: https://exiftool.org/
+
+#IMPORTS
 import subprocess
 import pandas as pd
 import os 
 from time import sleep, time, strftime, gmtime
 
-#This script uses ExifTool.
-#Make sure ExifTool is installed and available on your PATH first: https://exiftool.org/
 
 #SETTINGS
 
-#fields to tag images with
+#collection details
 collectionname = 'National Herbarium'
 collectioncode = 'PRE'
 collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 
+#fields to tag images with
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
 typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
 captionfield = "HOMETYPE" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
 
+#copyrights, license, etc
 copyright = "South African National Biodiversity Institute"
 license = 'CC BY 4.0'
 licenseurl = "https://creativecommons.org/licenses/by/4.0/"
@@ -26,12 +33,14 @@ rights = "Free to use for any purpose, including commercial purposes, with attri
 attribution = "South African National Biodiversity Institute"
 attributionURL = "https://www.sanbi.org/"
 
-fileext = '.tif' #the file types to filter on, assumes all the same
+#filetype to target
+fileext = '.tif'
 
-##read csv as dataframe
+#path and filename of dataset containing the specimen data
 csvpath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
 csvfile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
 
+#the directory with the images
 #image_dir = "C:\DevProjects\image-tagger-python\TaggingProject_Images" #use if data in a different location to images, else...
 image_dir = csvpath
 
