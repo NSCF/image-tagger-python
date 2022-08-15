@@ -2,10 +2,9 @@ import subprocess
 import pandas as pd
 import os 
 from time import sleep, time, strftime, gmtime
-import re
 
-#This uses ExifTool: https://exiftool.org
-#Make sure ExifTool is installed and available on your PATH first...
+#This script uses ExifTool.
+#Make sure ExifTool is installed and available on your PATH first: https://exiftool.org/
 
 #SETTINGS
 
@@ -18,7 +17,7 @@ keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIE
 typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image. Will be used for the title also
 captionfield = "HOMETYPE"
-sensitivefield = None
+sensitivefield = ''
 
 copyright = "South African National Biodiversity Institute"
 license = 'CC BY 4.0'
@@ -30,8 +29,8 @@ attributionURL = "https://www.sanbi.org/"
 fileext = '.tif' #the file types to filter on, assumes all the same
 
 ##read csv as dataframe
-csvpath = "C:\\temp\\Herbarium mass digitization project\\ImageTaggingExperiments"
-csvfile = 'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
+csvpath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
+csvfile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
 
 #image_dir = "C:\temp\Herbarium mass digitization project\ImageTaggingExperiments"
 image_dir = csvpath
@@ -46,6 +45,20 @@ print('Starting with image tagging...')
 fullpath = os.path.join(csvpath, csvfile)
 df = pd.read_csv(fullpath)
 print(df.shape[0], 'records read from', csvfile)
+
+#check the file includes all the fields
+allfields = [*keywordfields, typefield, specimenIdentifierField, captionfield, sensitivefield]
+fieldsvals = [i for i in allfields if i is not None and i.strip() != '']
+
+missingfields = []
+for field in fieldsvals:
+    if field not in df:
+        missingfields.append(field)
+
+if len(missingfields) > 0:
+    print('The following fields are not in the dataset. Check spelling, case, and fix the dataset if needed:')
+    print(' | '.join(missingfields))
+    exit()
 
 #create the exiftool process
 #For using subprocess see:
