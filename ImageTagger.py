@@ -32,7 +32,7 @@ fileext = '.tif' #the file types to filter on, assumes all the same
 csvpath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
 csvfile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
 
-#image_dir = "C:\temp\Herbarium mass digitization project\ImageTaggingExperiments"
+#image_dir = "C:\DevProjects\image-tagger-python\TaggingProject_Images" #use if data in a different location to images, else...
 image_dir = csvpath
 
 #THE SCRIPT
