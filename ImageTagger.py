@@ -14,9 +14,9 @@ collectionname = 'National Herbarium'
 collectioncode = 'PRE'
 collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 
-tagfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
+keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
 typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
-titlefield = "BARCODE"
+specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image. Will be used for the title also
 captionfield = "HOMETYPE"
 sensitivefield = None
 
@@ -75,15 +75,15 @@ for image in images:
         imagepath = os.path.join(image_dir, image)
 
         #get the keywords
-        imagerecord = df.loc[df['BARCODE'] == image.replace(fileext, '')]
+        imagerecord = df.loc[df[specimenIdentifierField] == image.replace(fileext, '')]
         if imagerecord.empty:
             recordsnotfound.append(image)
             continue
 
-        title = imagerecord[titlefield].values[0]
+        title = imagerecord[specimenIdentifierField].values[0]
         caption = imagerecord[captionfield].values[0]
         keywords = []
-        for field in tagfields:
+        for field in keywordfields:
             keywords.append(imagerecord[field].values[0])
 
         #for types we want to add keyword 'type' if the type is not already 'type'
@@ -130,7 +130,7 @@ for image in images:
         exiftool.stdout.flush() #clear it so we can start on the next loop...
 
         count += 1
-        if count % 10 == 0:
+        if count % 5 == 0:
             print(count, 'images tagged',  end='\r', flush = True) #see https://stackoverflow.com/a/5419488/3210158
 
 
@@ -157,4 +157,4 @@ if len(recordsnotfound) > 0:
 
 #just feedback
 print()
-print('all done')
+print('all done!')
