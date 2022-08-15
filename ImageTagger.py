@@ -15,9 +15,9 @@ collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
 typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
-specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image. Will be used for the title also
-captionfield = "HOMETYPE"
-sensitivefield = ''
+specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
+captionfield = "HOMETYPE" #for image captions/descriptions
+sensitivefield = '' #a field indicating sensitive taxa
 
 copyright = "South African National Biodiversity Institute"
 license = 'CC BY 4.0'
