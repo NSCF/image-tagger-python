@@ -114,22 +114,36 @@ for image in images:
         exiftoolcmd = f'-title={title}{os.linesep} -xmp:description={caption}{os.linesep} -copyright={copyright}{os.linesep} -license={licenseurl}{os.linesep} -usageterms={rights}{os.linesep} -attributionname={attribution}{os.linesep} -attributionurl={attributionURL}{os.linesep} -xmp:subject={keywordsstring}{os.linesep} -sep{os.linesep} ,{os.linesep} {imagepath}{os.linesep} -execute{count}{os.linesep}'
         encodedcmd = exiftoolcmd.encode('utf-8')
         exiftool.stdin.write(encodedcmd)
+        exiftool.stdin.flush()
 
-
+        #now read the output from exiftool until we get to the end of the response message
+        #we need this to keep the loop in sync with exiftool so we don't flood it
+        output = ""
+        newlines = 0
+        while newlines < 2: 
+            char = exiftool.stdout.read1(1)
+            output += char.decode('utf-8')
+            if os.linesep in output:
+                newlines += 1
+                output = ""
+        
+        exiftool.stdout.flush() #clear it so we can start on the next loop...
 
         count += 1
+        if count % 10 == 0:
+            print(count, 'images tagged',  end='\r', flush = True) #see https://stackoverflow.com/a/5419488/3210158
 
-#finish the process
-print('finishing up...')
+
+#finish the exiftool process
+print('finishing up.......', end='\r')
 endcmd = f'-stay_open{os.linesep}0{os.linesep}'
 encmdencoded = endcmd.encode('utf-8')
 exiftool.stdin.write(encmdencoded)
 exiftool.stdin.flush()
+
+#give it some time to close...
 while exiftool.poll() == None:
-    sleep(5)
-    message = exiftool.stdout.read1().decode('utf-8')
-    nums = re.findall('\d+', message)
-    print(nums[-1], 'images tagged', end='\r', flush = True)
+    sleep(1)
 
 end = time()
 totaltime = strftime("%H:%M:%S", gmtime(end - start))
