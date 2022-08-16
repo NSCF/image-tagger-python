@@ -10,7 +10,6 @@ import pandas as pd
 import os 
 from time import sleep, time, strftime, gmtime
 
-
 #SETTINGS
 
 #collection details
@@ -36,13 +35,23 @@ attributionURL = "https://www.sanbi.org/"
 #filetype to target
 fileext = '.tif'
 
+#we might only want to tag some of the images so we can break the workload into manageable chunks
+tagbatch = True #indicate whether to tag the batch or not
+batchsize = 500
+startat = 400
+
 #path and filename of dataset containing the specimen data
 csvpath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
 csvfile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
 
 #the directory with the images
-#image_dir = "C:\DevProjects\image-tagger-python\TaggingProject_Images" #use if data in a different location to images, else...
-image_dir = csvpath
+image_dir = r'F:\PRE' #use if data in a different location to images, else...
+#image_dir = csvpath
+
+#do you want to write out any image files that were not found in the dataset?
+writemissing = True
+writepath = r''
+writefile = r''
 
 #THE SCRIPT
 
@@ -86,10 +95,16 @@ except FileNotFoundError as e:
     print('Bye bye...')
     exit()
 
-##loop through the images and add tags
+
+## read the directory of images, and slice if tagbatch == True
 images = os.listdir(image_dir)
+if tagbatch:
+    images = images[startat:startat + batchsize]
+
+##loop through the images and add tags
 count = 0
 recordsnotfound = []
+print('\033[?25l', end="") #hide the cursor
 for image in images:
     if (image.endswith)(fileext):
 
@@ -169,6 +184,7 @@ while exiftool.poll() == None:
 
 end = time()
 totaltime = strftime("%H:%M:%S", gmtime(end - start))
+print('\033[?25h', end="")
 print(count, 'images tagged in', totaltime)
 
 #print any images where records not found in the dataset
@@ -176,6 +192,15 @@ if len(recordsnotfound) > 0:
     print()
     print('Could not find records for the following images:')
     print('|'.join(recordsnotfound))
+
+    if writemissing:
+        print()
+        print('writing missing images to file...')
+        ofpath = os.path.join(writepath, writefile) #of = outfile
+        of = open(ofpath, 'a')
+        oftext = os.linesep.join(recordsnotfound)
+        of.write(oftext)
+        of.close()
 
 #just feedback
 print()
