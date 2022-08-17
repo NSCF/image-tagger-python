@@ -199,8 +199,13 @@ if len(recordsnotfound) > 0:
         print()
         print('writing missing images to file...')
         ofpath = os.path.join(writepath, writefile) #of = outfile
+        newfile = not os.path.exists(ofpath)
         of = open(ofpath, 'a')
-        oftext = os.linesep.join(recordsnotfound)
+        oftext = '\r'.join(recordsnotfound)
+        if newfile: # the file is created for the first time
+            of.write('files\r')
+        else:
+            oftext = '\r' + oftext #we're appending so we need the first newline
         of.write(oftext)
         of.close()
 
