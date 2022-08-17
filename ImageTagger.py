@@ -37,8 +37,8 @@ fileext = '.tif'
 
 #we might only want to tag some of the images so we can break the workload into manageable chunks
 tagbatch = True #indicate whether to tag the batch or not
-batchsize = 500
-startat = 400
+batchsize = 20000
+startat = 900
 
 #path and filename of dataset containing the specimen data
 csvpath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
@@ -50,16 +50,17 @@ image_dir = r'F:\PRE' #use if data in a different location to images, else...
 
 #do you want to write out any image files that were not found in the dataset?
 writemissing = True
-writepath = r''
-writefile = r''
+#writepath = r''
+writepath = csvpath
+writefile = r'imagesNotFound.csv'
 
 #THE SCRIPT
 
 start = time()
 print()
-print('Starting with image tagging...')
 
 #read the data file
+print('reading data file...')
 fullpath = os.path.join(csvpath, csvfile)
 df = pd.read_csv(fullpath)
 print(df.shape[0], 'records read from', csvfile)
@@ -96,6 +97,9 @@ except FileNotFoundError as e:
     exit()
 
 
+print('  ', end = '') #this is needed for some reason...
+print('\rStarting with image tagging...', end='')
+
 ## read the directory of images, and slice if tagbatch == True
 images = os.listdir(image_dir)
 if tagbatch:
@@ -104,7 +108,6 @@ if tagbatch:
 ##loop through the images and add tags
 count = 0
 recordsnotfound = []
-print('\033[?25l', end="") #hide the cursor
 for image in images:
     if (image.endswith)(fileext):
 
@@ -168,11 +171,11 @@ for image in images:
 
         count += 1
         if count % 5 == 0:
-            print(count, 'images tagged',  end='\r', flush = True) #see https://stackoverflow.com/a/5419488/3210158
+            print('\r', count, 'images tagged', end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
 
 
 #finish the exiftool process
-print('finishing up.......', end='\r')
+print('\rfinishing up.......', end = '')
 endcmd = f'-stay_open{os.linesep}0{os.linesep}'
 encmdencoded = endcmd.encode('utf-8')
 exiftool.stdin.write(encmdencoded)
@@ -184,8 +187,7 @@ while exiftool.poll() == None:
 
 end = time()
 totaltime = strftime("%H:%M:%S", gmtime(end - start))
-print('\033[?25h', end="")
-print(count, 'images tagged in', totaltime)
+print('\r', count, 'images tagged in', totaltime)
 
 #print any images where records not found in the dataset
 if len(recordsnotfound) > 0:
