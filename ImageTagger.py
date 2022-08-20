@@ -129,8 +129,10 @@ for image in images:
         #for types we want to add keyword 'type' if the type is not already 'type'
         if typefield:
             typeval = imagerecord[typefield].values[0]
-            if typeval and str(typeval) != 'nan' and typeval.strip() != '' and typeval.lower() != 'type':
-                keywords.append('type')
+            if typeval and str(typeval) != 'nan' and typeval.strip() != '':
+                if typeval.lower() != 'type':
+                    keywords.append(typeval)            
+                keywords.append('type') #all types are tagged as 'type'
 
         if sensitivefield:
             keywords.append(imagerecord[sensitivefield].values[0])
