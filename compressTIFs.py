@@ -1,6 +1,8 @@
 ## compress tiff images, and only tiff images...
-## NOTE that this uses LZW compression, see https://havecamerawilltravel.com/tiff-image-compression/
-## BUT ZIP compression in Adobe Lightroom gives much better results...
+## see https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#saving-tiff-images
+## see https://havecamerawilltravel.com/tiff-image-compression/
+## see also https://openpreservation.org/blogs/compression-at-your-discretion/
+
 
 #IMPORTS
 from PIL import Image, features
@@ -9,10 +11,13 @@ from time import time, strftime, gmtime
 
 #SETTINGS
 
+method = 'tiff_adobe_deflate' #ZIP compression
+#method = 'tiff_lzw' #LZW compression
+
 #the directory with the images
 image_dir = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments'
-overwrite = False #overwrite the existing file or write to a new location. If 'new_dir' is not specified below it will add to a subdirectory called 'compressed'
-new_dir = r''
+overwrite = False #overwrite the existing files or write to a new location. If 'new_dir' is not specified below it will add to a subdirectory called 'compressed'
+new_dir = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments\pythonzipcompressed'
 
 #SCRIPT
 if not features.check('libtiff'):
@@ -62,9 +67,13 @@ with os.scandir(image_dir) as it:
         infile = os.path.join(image_dir, file)
         outfile = os.path.join(new_dir, file)
 
+        if not overwrite:
+          if os.path.exists(outfile):
+            continue
+
         try:
           with Image.open(infile) as im:
-            im.save(outfile, compression = 'tiff_lzw')
+            im.save(outfile, compression = method)
             finalsize += os.path.getsize(outfile)
             count += 1
         except Exception as e:

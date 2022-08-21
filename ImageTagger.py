@@ -36,7 +36,7 @@ attributionURL = "https://www.sanbi.org/"
 fileext = '.tif'
 
 #we might only want to tag some of the images so we can break the workload into manageable chunks
-tagbatch = True #indicate whether to tag the batch or not
+tagbatch = False #indicate whether to tag the batch or not
 batchsize = 20000
 startat = 900
 
@@ -52,7 +52,15 @@ image_dir = r'F:\PRE' #use if data in a different location to images, else...
 writemissing = True
 #writepath = r''
 writepath = csvpath
-writefile = r'imagesNotFound.csv'
+writefile = r''
+
+#only tag files included in a list - meant to be used with the output from 'writemissing' above.
+#first column must be the file names, column name is ignored
+#make sure that the file names in the list have file extensions (they may have been removed from writefile in order to extract from a database)
+tagfromlist = True
+#listpath = r''
+listpath = csvpath
+listfile = r'imagesNotFound.csv'
 
 #THE SCRIPT
 
@@ -78,6 +86,14 @@ if len(missingfields) > 0:
     print('The following fields are not in the dataset. Check spelling, case, and fix the dataset if needed:')
     print(' | '.join(missingfields))
     exit()
+
+#read the file list if requested
+if tagfromlist:
+    fullpath = os.path.join(listpath, listfile)
+    filelist = pd.read_csv(fullpath)
+    if filelist.shape[0] == 0: #no records in supplied file...
+        filelist = None
+        print(f'No files listed in {listfile} -- defaulting to tag all images in {image_dir}')
 
 #create the exiftool process
 #For using subprocess see:
@@ -111,6 +127,10 @@ recordsnotfound = []
 for image in images:
     if (image.endswith)(fileext):
 
+        if tagfromlist and filelist:
+            if image not in filelist[:, 0]:
+                continue
+        
         #the full file name and path
         imagepath = os.path.join(image_dir, image)
 
