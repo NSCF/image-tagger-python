@@ -61,7 +61,6 @@ finalsize = 0
 with os.scandir(image_dir) as it:
   for entry in it:
     if entry.is_file():
-      originalsize += entry.stat().st_size
       file = entry.name
       if file.endswith('.tif'):
         infile = os.path.join(image_dir, file)
@@ -70,6 +69,8 @@ with os.scandir(image_dir) as it:
         if not overwrite:
           if os.path.exists(outfile):
             continue
+
+        originalsize += entry.stat().st_size
 
         try:
           with Image.open(infile) as im:
@@ -81,7 +82,7 @@ with os.scandir(image_dir) as it:
           print(message)
 
 end = time()
-print('Finished compressing files')
+print('Finished compressing images')
 totaltime = strftime("%H:%M:%S", gmtime(end - start))
 print(count, 'images compressed in', totaltime)
 print('Total original size:', sizeof_fmt(originalsize))
