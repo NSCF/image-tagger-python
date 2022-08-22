@@ -41,8 +41,8 @@ batchsize = 20000
 startat = 900
 
 #path and filename of dataset containing the specimen data
-csvpath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
-csvfile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
+datafilepath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
+datafile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
 
 #the directory with the images
 image_dir = r'F:\PRE' #use if data in a different location to images, else...
@@ -51,7 +51,7 @@ image_dir = r'F:\PRE' #use if data in a different location to images, else...
 #do you want to write out any image files that were not found in the dataset?
 writemissing = True
 #writepath = r''
-writepath = csvpath
+writepath = datafilepath
 writefile = r''
 
 #only tag files included in a list - meant to be used with the output from 'writemissing' above.
@@ -59,7 +59,7 @@ writefile = r''
 #make sure that the file names in the list have file extensions (they may have been removed from writefile in order to extract from a database)
 tagfromlist = True
 #listpath = r''
-listpath = csvpath
+listpath = datafilepath
 listfile = r'imagesNotFound.csv'
 
 #THE SCRIPT
@@ -69,9 +69,9 @@ print()
 
 #read the data file
 print('reading data file...')
-fullpath = os.path.join(csvpath, csvfile)
+fullpath = os.path.join(datafilepath, datafile)
 df = pd.read_csv(fullpath)
-print(df.shape[0], 'records read from', csvfile)
+print(df.shape[0], 'records read from', datafile)
 
 #check the file includes all the fields
 allfields = [*keywordfields, typefield, specimenIdentifierField, captionfield, sensitivefield]
