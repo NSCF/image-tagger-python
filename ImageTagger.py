@@ -170,6 +170,10 @@ for image in images:
         keywords = [x for x in keywords if str(x) != 'nan' and x!= None and x.strip() != '']
         keywords = map(str.strip, keywords)
 
+        #finally, get rid of any duplicate keywords...
+        keywords = set(keywords)
+        keywords = list(keywords)
+
         keywordsstring = ",".join(keywords)
         
         #tag the image
