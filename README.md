@@ -7,3 +7,5 @@ Uses the excellent ExifTool ([exiftool.org](https://exiftool.org/)) to do the ta
 Open ImageTagger.py, change the values in the SETTINGS section at the top of the file to represent what you want. Make sure that the fields you list in `keywordfields` are present in your dataset. Save and run the script in a terminal with `python ImageTagger.py`
 
 Please add comments, suggestions, and issues in the Issues section here in Github.
+
+Currently under active development and testing.
