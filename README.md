@@ -1,6 +1,6 @@
 ## Tagging images with values from a dataset
 
-A basic Python script to add a series of keywords to a set of specimen images from a dataset, as well as copyright and license tags. Expects the filename of the image (with file extension removed) to match a unique value, such as catalog number or barcode, in the dataset provided. 
+A basic Python script to add a series of keywords from a dataset to a corresponding set of specimen images, as well as copyright and license tags. Expects the filename of the image (with file extension removed) to match a unique value, such as catalog number or barcode, in the dataset provided. 
 
 Uses the excellent ExifTool ([exiftool.org](https://exiftool.org/)) to do the tagging. Make sure that ExifTool is installed first and available on your PATH.
 
