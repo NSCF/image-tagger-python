@@ -18,10 +18,10 @@ collectioncode = 'PRE'
 collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 
 #fields to tag images with
-keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
-typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
+keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME', 'ACCEPTEDGENUS', 'ACCEPTEDSPECIES']
+typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
-captionfield = "HOMETYPE" #for image captions/descriptions
+captionfield = "FULLNAME" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
 
 #copyrights, license, etc
@@ -41,18 +41,18 @@ batchsize = 20000
 startat = 900
 
 #path and filename of dataset containing the specimen data
-datafilepath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
-datafile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
+datafilepath = r'C:\general work\NSCF\TypeTagging' #keep this as a raw string so you don't have to escape the backslashes
+datafile = r'PRE_NonTypes_BODATSA_Aug_2022_OpenRefine.csv'
 
 #the directory with the images
-image_dir = r'F:\PRE' #use if data in a different location to images, else...
+image_dir = r'G:\PRE' #use if data in a different location to images, else...
 #image_dir = csvpath
 
 #do you want to write out any image files that were not found in the dataset?
 writemissing = True
 #writepath = r''
 writepath = datafilepath
-writefile = r''
+writefile = r'missingNonTypesAug2022.csv'
 
 #only tag files included in a list - meant to be used with the output from 'writemissing' above.
 #first column must be the file names, column name is ignored
@@ -127,8 +127,8 @@ recordsnotfound = []
 for image in images:
     if (image.endswith)(fileext):
 
-        if tagfromlist and filelist:
-            if image not in filelist[:, 0]:
+        if tagfromlist and not filelist.empty:
+            if image not in filelist.iloc[:, 0].values:
                 continue
         
         #the full file name and path
