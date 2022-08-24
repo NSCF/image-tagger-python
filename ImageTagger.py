@@ -20,6 +20,9 @@ collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 #fields to tag images with
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME', 'ACCEPTEDGENUS', 'ACCEPTEDSPECIES']
 typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
+specimenurl = ''
+keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
+typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
 captionfield = "FULLNAME" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
@@ -74,7 +77,7 @@ df = pd.read_csv(fullpath)
 print(df.shape[0], 'records read from', datafile)
 
 #check the file includes all the fields
-allfields = [*keywordfields, typefield, specimenIdentifierField, captionfield, sensitivefield]
+allfields = [*keywordfields, specimenurl, typefield, specimenIdentifierField, captionfield, sensitivefield]
 fieldsvals = [i for i in allfields if i is not None and i.strip() != '']
 
 missingfields = []
