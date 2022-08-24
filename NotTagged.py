@@ -9,7 +9,7 @@ from time import sleep, time, strftime, gmtime
 #SETTINGS
 
 #the directory with the images
-image_dir = r'F:\PRE' #use if data in a different location to images, else...
+image_dir = r'G:\PRE' #use if data in a different location to images, else...
 
 #filetype to target
 fileext = '.tif'
