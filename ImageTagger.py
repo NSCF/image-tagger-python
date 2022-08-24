@@ -141,14 +141,10 @@ for image in images:
 
         #get the keywords
         identifier = image.replace(fileext, '')
-<<<<<<< HEAD
         imagerecord = df.loc[identifier] #this searches using the index
         if imagerecord.empty:
-=======
-        if identifier in df.index:
             imagerecord = df.loc[identifier]
         else:
->>>>>>> 0aca6a483a66147608efa1a9e5f32af4cba16b4f
             recordsnotfound.append(image)
             continue
 
