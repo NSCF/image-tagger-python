@@ -141,7 +141,7 @@ for image in images:
 
         #get the keywords
         identifier = image.replace(fileext, '')
-        imagerecord = df.index.loc[identifier]
+        imagerecord = df.loc[identifier] #this searches using the index
         if imagerecord.empty:
             recordsnotfound.append(image)
             continue
