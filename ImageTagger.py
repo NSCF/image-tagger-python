@@ -22,7 +22,7 @@ keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIE
 typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
 specimenurl = ''
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
-typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
+typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
 captionfield = "FULLNAME" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
@@ -74,7 +74,7 @@ print()
 print('reading data file...')
 fullpath = os.path.join(datafilepath, datafile)
 df = pd.read_csv(fullpath)
-df = df.set_index(specimenIdentifierField)
+df = df.set_index(specimenIdentifierField, drop = False)
 print(df.shape[0], 'records read from', datafile)
 
 #check the file includes all the fields
@@ -141,27 +141,28 @@ for image in images:
 
         #get the keywords
         identifier = image.replace(fileext, '')
-        imagerecord = df.index.loc[identifier]
-        if imagerecord.empty:
+        if identifier in df.index:
+            imagerecord = df.loc[identifier]
+        else:
             recordsnotfound.append(image)
             continue
 
-        title = imagerecord[specimenIdentifierField].values[0]
-        caption = imagerecord[captionfield].values[0]
+        title = imagerecord[specimenIdentifierField]
+        caption = imagerecord[captionfield]
         keywords = []
         for field in keywordfields:
-            keywords.append(imagerecord[field].values[0])
+            keywords.append(imagerecord[field])
 
         #for types we want to add keyword 'type' if the type is not already 'type'
         if typefield:
-            typeval = imagerecord[typefield].values[0]
+            typeval = imagerecord[typefield]
             if typeval and str(typeval) != 'nan' and typeval.strip() != '':
                 if typeval.lower() != 'type':
                     keywords.append(typeval)            
                 keywords.append('type') #all types are tagged as 'type'
 
         if sensitivefield:
-            keywords.append(imagerecord[sensitivefield].values[0])
+            keywords.append(imagerecord[sensitivefield])
 
         if license:
             keywords.append(license)
