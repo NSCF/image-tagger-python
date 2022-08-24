@@ -74,6 +74,7 @@ print()
 print('reading data file...')
 fullpath = os.path.join(datafilepath, datafile)
 df = pd.read_csv(fullpath)
+df = df.set_index(specimenIdentifierField)
 print(df.shape[0], 'records read from', datafile)
 
 #check the file includes all the fields
@@ -94,6 +95,7 @@ if len(missingfields) > 0:
 if tagfromlist:
     fullpath = os.path.join(listpath, listfile)
     filelist = pd.read_csv(fullpath)
+    filelist = filelist.set_index(filelist.columns[0])
     if filelist.shape[0] == 0: #no records in supplied file...
         filelist = None
         print(f'No files listed in {listfile} -- defaulting to tag all images in {image_dir}')
@@ -131,14 +133,15 @@ for image in images:
     if (image.endswith)(fileext):
 
         if tagfromlist and not filelist.empty:
-            if image not in filelist.iloc[:, 0].values:
+            if image not in filelist.index:
                 continue
         
         #the full file name and path
         imagepath = os.path.join(image_dir, image)
 
         #get the keywords
-        imagerecord = df.loc[df[specimenIdentifierField] == image.replace(fileext, '')]
+        identifier = image.replace(fileext, '')
+        imagerecord = df.index.loc[identifier]
         if imagerecord.empty:
             recordsnotfound.append(image)
             continue
