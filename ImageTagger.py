@@ -159,7 +159,7 @@ except FileNotFoundError as e:
     exit()
 
 print('  ', end = '') #this is needed for some reason...
-print('\rStarting image tagging...', end='')
+print('\rStarting image tagging...', end='', flush=True)
 blank = ' ' #for clearing printed values...
 
 ##loop through the images and add tags
@@ -248,13 +248,12 @@ for image in images:
 
         count += 1
         if count % 5 == 0:
-            
-            print(f'\r{blank * 40}')
+            print(f'\r{blank * 40}', end ='',)
             print('\r', count, 'images tagged', end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
 
 
 #finish the exiftool process
-print(f'\r{blank * 30}')
+print(f'\r{blank * 30}', end ='',)
 print('\rfinishing up.......', end = '')
 endcmd = f'-stay_open{os.linesep}0{os.linesep}'
 encmdencoded = endcmd.encode('utf-8')
