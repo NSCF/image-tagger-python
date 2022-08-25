@@ -151,9 +151,6 @@ for image in images:
         if imagerecord.empty:
             recordsnotfound.append(image)
             continue
-        else:
-            imagerecord = df.loc[identifier]
-            
 
         title = imagerecord[specimenIdentifierField]
         caption = imagerecord[captionfield]
