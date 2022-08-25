@@ -77,6 +77,7 @@ try:
     df = pd.read_csv(fullpath)
 except Exception as e:
     print(e)
+    print('Quitting...')
     exit()
 
 if df.empty:
@@ -127,6 +128,7 @@ if tagfromlist:
         filelist = pd.read_csv(fullpath)
     except Exception as e:
         print(e)
+        print('Quitting...')
         exit()
 
     if filelist.empty: #no records in supplied file...
