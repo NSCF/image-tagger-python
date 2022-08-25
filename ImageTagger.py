@@ -62,7 +62,7 @@ writefile = r'missingNonTypesAug2022.csv'
 #make sure that the file names in the list have file extensions (they may have been removed from writefile in order to extract from a database)
 tagfromlist = True
 #listpath = r''
-listpath = datafilepath
+listpath = image_dir
 listfile = r'imagesNotFound.csv'
 
 #THE SCRIPT
@@ -250,7 +250,7 @@ for image in images:
         if count % 5 == 0:
             
             print(f'\r{blank * 40}')
-            print('\r', count, 'images tagged', end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
+            print(f'\r{count}', 'images tagged', end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
 
 
 #finish the exiftool process
