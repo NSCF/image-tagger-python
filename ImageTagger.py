@@ -45,7 +45,7 @@ startat = 900
 
 #path and filename of dataset containing the specimen data
 datafilepath = r'C:\general work\NSCF\TypeTagging' #keep this as a raw string so you don't have to escape the backslashes
-datafile = r'PRE_NonTypes_BODATSA_Aug_2022_OpenRefine.csv'
+datafile = r'PRE_NonTypes_BODATSA_Aug_2022_2_OpenRefine.csv'
 
 #the directory with the images
 image_dir = r'G:\PRE' #use if data in a different location to images, else...
@@ -55,15 +55,15 @@ image_dir = r'G:\PRE' #use if data in a different location to images, else...
 writemissing = True
 #writepath = r''
 writepath = datafilepath
-writefile = r'missingNonTypesAug2022.csv'
+writefile = r'missingNonTypesAug2022_final.csv'
 
 #only tag files included in a list - meant to be used with the output from 'writemissing' above.
 #first column must be the file names, column name is ignored
 #make sure that the file names in the list have file extensions (they may have been removed from writefile in order to extract from a database)
 tagfromlist = True
 #listpath = r''
-listpath = image_dir
-listfile = r'imagesNotFound.csv'
+listpath = datafilepath
+listfile = r'missingNonTypesAug2022.csv'
 
 #THE SCRIPT
 
