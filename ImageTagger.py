@@ -44,12 +44,12 @@ batchsize = 20000
 startat = 900
 
 #path and filename of dataset containing the specimen data
-datafilepath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
-datafile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
+datafilepath = r'C:\general work\NSCF\TypeTagging' #keep this as a raw string so you don't have to escape the backslashes
+datafile = r'PRE_NonTypes_BODATSA_Aug_2022_OpenRefine.csv'
 
 #the directory with the images
-#image_dir = r'G:\PRE' #use if data in a different location to images, else...
-image_dir = datafilepath
+image_dir = r'G:\PRE' #use if data in a different location to images, else...
+#image_dir = datafilepath
 
 #do you want to write out any image files that were not found in the dataset?
 writemissing = True
@@ -63,7 +63,7 @@ writefile = r'missingNonTypesAug2022.csv'
 tagfromlist = True
 #listpath = r''
 listpath = datafilepath
-listfile = r'tagFromListTest.csv'
+listfile = r'imagesNotFound.csv'
 
 #THE SCRIPT
 
