@@ -73,9 +73,19 @@ print()
 #read the data file
 print('reading data file...')
 fullpath = os.path.join(datafilepath, datafile)
-df = pd.read_csv(fullpath)
+try: 
+    df = pd.read_csv(fullpath)
+except Exception as e:
+    print(e)
+    exit()
+
+if df.empty:
+    print('No records found in', datafile)
+    print('Quitting...')
+    exit()
+
+print(df.shape[0], 'records read from', datafile)    
 df = df.set_index(specimenIdentifierField, drop = False)
-print(df.shape[0], 'records read from', datafile)
 
 #check the file includes all the fields
 allfields = [*keywordfields, specimenurl, typefield, specimenIdentifierField, captionfield, sensitivefield]
@@ -91,15 +101,42 @@ if len(missingfields) > 0:
     print(' | '.join(missingfields))
     exit()
 
+## read the directory of images, and slice if tagbatch == True
+images = os.listdir(image_dir)
+images = list(filter(lambda x: x.endswith(fileext), images))
+
+if len(images)  == 0:
+    print('No images with file type', fileext, 'at', image_dir)
+    print('Quitting...')
+    exit()
+else:
+    if tagfromlist:
+        print(len(images), 'images found in', image_dir)
+    else:
+        print(len(images), 'images found for tagging')
+
+if tagbatch:
+    images = images[startat:startat + batchsize]
+    print(len(images), 'will be tagged in this batch')
+
 #read the file list if requested
 if tagfromlist:
     fullpath = os.path.join(listpath, listfile)
-    filelist = pd.read_csv(fullpath)
-    if filelist.shape[0] == 0: #no records in supplied file...
-        filelist = None
-        print(f'No files listed in {listfile} -- defaulting to tag all images in {image_dir}')
+
+    try:
+        filelist = pd.read_csv(fullpath)
+    except Exception as e:
+        print(e)
+        exit()
+
+    if filelist.empty: #no records in supplied file...
+        print(f'No files listed in {listfile} --please check', listfile)
+        print('Quitting...')
+        exit()
     else:
         filelist = filelist.set_index(filelist.columns[0], drop = False)
+        print(filelist.size, 'files to be tagged from', listfile)
+
 
 #create the exiftool process
 #For using subprocess see:
@@ -109,6 +146,7 @@ if tagfromlist:
 
 #For running exiftool as a subprocess see -execute and -stay_open here:
 #https://exiftool.org/exiftool_pod.html#Advanced-options
+print('initializing exiftool...')
 try:
     exiftool = subprocess.Popen(['exiftool', '-stay_open', 'True', '-@', '-', '-common_args', '-overwrite_original'], 
         stdin = subprocess.PIPE, 
@@ -118,15 +156,9 @@ except FileNotFoundError as e:
     print('Bye bye...')
     exit()
 
-
 print('  ', end = '') #this is needed for some reason...
-print('\rStarting with image tagging...', end='')
+print('\rStarting image tagging...', end='')
 blank = ' ' #for clearing printed values...
-
-## read the directory of images, and slice if tagbatch == True
-images = os.listdir(image_dir)
-if tagbatch:
-    images = images[startat:startat + batchsize]
 
 ##loop through the images and add tags
 count = 0
@@ -147,8 +179,13 @@ for image in images:
         #continue
 
         #get the keywords
-        imagerecord = df.loc[identifier] #this searches using the index
-        if imagerecord.empty:
+        try:
+            imagerecord = df.loc[identifier] #this searches using the index
+        except:
+            recordsnotfound.append(image)
+            continue
+        
+        if imagerecord.empty: #I don't think this can happen, given the above...
             recordsnotfound.append(image)
             continue
 
