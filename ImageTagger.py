@@ -44,12 +44,12 @@ batchsize = 20000
 startat = 900
 
 #path and filename of dataset containing the specimen data
-datafilepath = r'C:\general work\NSCF\TypeTagging' #keep this as a raw string so you don't have to escape the backslashes
-datafile = r'PRE_NonTypes_BODATSA_Aug_2022_OpenRefine.csv'
+datafilepath = r'C:\temp\Herbarium mass digitization project\ImageTaggingExperiments' #keep this as a raw string so you don't have to escape the backslashes
+datafile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
 
 #the directory with the images
-image_dir = r'G:\PRE' #use if data in a different location to images, else...
-#image_dir = csvpath
+#image_dir = r'G:\PRE' #use if data in a different location to images, else...
+image_dir = datafilepath
 
 #do you want to write out any image files that were not found in the dataset?
 writemissing = True
@@ -63,7 +63,7 @@ writefile = r'missingNonTypesAug2022.csv'
 tagfromlist = True
 #listpath = r''
 listpath = datafilepath
-listfile = r'imagesNotFound.csv'
+listfile = r'tagFromListTest.csv'
 
 #THE SCRIPT
 
@@ -95,10 +95,11 @@ if len(missingfields) > 0:
 if tagfromlist:
     fullpath = os.path.join(listpath, listfile)
     filelist = pd.read_csv(fullpath)
-    filelist = filelist.set_index(filelist.columns[0])
     if filelist.shape[0] == 0: #no records in supplied file...
         filelist = None
         print(f'No files listed in {listfile} -- defaulting to tag all images in {image_dir}')
+    else:
+        filelist = filelist.set_index(filelist.columns[0], drop = False)
 
 #create the exiftool process
 #For using subprocess see:
@@ -120,6 +121,7 @@ except FileNotFoundError as e:
 
 print('  ', end = '') #this is needed for some reason...
 print('\rStarting with image tagging...', end='')
+blank = ' ' #for clearing printed values...
 
 ## read the directory of images, and slice if tagbatch == True
 images = os.listdir(image_dir)
@@ -132,21 +134,26 @@ recordsnotfound = []
 for image in images:
     if (image.endswith)(fileext):
 
+        identifier = image.replace(fileext, '')
+
         if tagfromlist and not filelist.empty:
-            if image not in filelist.index:
+            if image not in filelist.index and identifier not in filelist.index:
                 continue
         
         #the full file name and path
         imagepath = os.path.join(image_dir, image)
 
+        #just for testing when we're trying to see if we reach the code below...
+        #continue
+
         #get the keywords
-        identifier = image.replace(fileext, '')
         imagerecord = df.loc[identifier] #this searches using the index
         if imagerecord.empty:
-            imagerecord = df.loc[identifier]
-        else:
             recordsnotfound.append(image)
             continue
+        else:
+            imagerecord = df.loc[identifier]
+            
 
         title = imagerecord[specimenIdentifierField]
         caption = imagerecord[captionfield]
@@ -205,10 +212,13 @@ for image in images:
 
         count += 1
         if count % 5 == 0:
+            
+            print(f'\r{blank * 40}')
             print('\r', count, 'images tagged', end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
 
 
 #finish the exiftool process
+print(f'\r{blank * 30}')
 print('\rfinishing up.......', end = '')
 endcmd = f'-stay_open{os.linesep}0{os.linesep}'
 encmdencoded = endcmd.encode('utf-8')
@@ -221,7 +231,10 @@ while exiftool.poll() == None:
 
 end = time()
 totaltime = strftime("%H:%M:%S", gmtime(end - start))
-print('\r', count, 'images tagged in', totaltime)
+if count > 0:
+    print(f'\r{count}', 'images tagged in', totaltime)
+else:
+    print('\rNo images were tagged...')
 
 #print any images where records not found in the dataset
 if len(recordsnotfound) > 0:
