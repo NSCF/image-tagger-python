@@ -15,7 +15,8 @@ image_dir = r'G:\PRE' #use if data in a different location to images, else...
 fileext = '.tif'
 
 #the file to write results to
-writefile = r'imagesNotFound.csv'
+writepath = r'C:\general work\NSCF\TypeTagging'
+writefile = r'missingNonTypesAug2022_final.csv'
 
 #SCRIPT
 
@@ -110,7 +111,7 @@ print('\r', count, 'images checked in', totaltime)
 
 if len(nottagged) > 0 :
   print(len(nottagged), 'do not have keywords, see', writefile)
-  ofpath = os.path.join(image_dir, writefile) #of = outfile
+  ofpath = os.path.join(writepath, writefile) #of = outfile
   of = open(ofpath, 'w')
   of.write('file\r')
   oftext = '\r'.join(nottagged)
