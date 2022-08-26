@@ -21,10 +21,9 @@ collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME', 'ACCEPTEDGENUS', 'ACCEPTEDSPECIES']
 typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
 specimenurl = ''
-keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
-typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
+typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
-captionfield = "HOMETYPE" #for image captions/descriptions
+captionfield = "FULLNAME" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
 
 #copyrights, license, etc
@@ -45,7 +44,7 @@ startat = 900
 
 #path and filename of dataset containing the specimen data
 datafilepath = r'C:\general work\NSCF\TypeTagging' #keep this as a raw string so you don't have to escape the backslashes
-datafile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
+datafile = r'PRE_NonTypes_BODATSA_Aug_2022_2_OpenRefine.csv'
 
 #the directory with the images
 image_dir = r'G:\PRE' #use if data in a different location to images, else...
@@ -60,10 +59,10 @@ writefile = r'missingNonTypesAug2022_final.csv'
 #only tag files included in a list - meant to be used with the output from 'writemissing' above.
 #first column must be the file names, column name is ignored
 #make sure that the file names in the list have file extensions (they may have been removed from writefile in order to extract from a database)
-tagfromlist = False
+tagfromlist = True
 #listpath = r''
 listpath = datafilepath
-listfile = r'missingNonTypesAug2022.csv'
+listfile = r'missingNonTypesAug2022_final.csv'
 
 #THE SCRIPT
 
