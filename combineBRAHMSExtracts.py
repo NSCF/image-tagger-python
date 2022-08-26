@@ -10,7 +10,7 @@ files = [
 
 writefilename = r'PRE_Types&NonTypes_BODATSA_Aug_2022_combined.csv'
 
-fields = ['BARCODE', 'FULLNAME', 'HOMETYPE', 'HOMETSTAT', 'CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME', 'ACCEPTEDGENUS', 'ACCEPTEDSPECIES']
+fields = ['BARCODE', 'FULLNAME', 'HOMETYPE', 'HOMETSTAT', 'CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME', 'ACCEPTEDGENUS', 'ACCEPTEDSPECIES', 'CAPTION']
 
 
 #SCRIPT
@@ -29,10 +29,6 @@ for file in files:
                 if key not in fields:
                     del record[key]
 
-            #add additonal fields
-            if 'HOMETSTAT' not in record:
-                record['HOMETSTAT'] = None
-
             if record['HOMETYPE'] is None or record['HOMETYPE'].strip() == '':
                 record['CAPTION'] = record['FULLNAME']
             else:
@@ -42,8 +38,9 @@ for file in files:
             allrecords.append(record)
 
 #write out results
-with open(os.path.join(filepath, writefilename), 'w', encoding='UTF8') as f:
-    writer = csv.writer(f)
-    writer.writerows(allrecords)
+with open(os.path.join(filepath, writefilename), 'w', encoding='UTF8', newline='') as f:
+    dict_writer = csv.DictWriter(f, fields)
+    dict_writer.writeheader()
+    dict_writer.writerows(allrecords)
 
 print('All done, thank you, bye bye...')

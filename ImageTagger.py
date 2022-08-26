@@ -19,11 +19,11 @@ collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 
 #fields to tag images with
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME', 'ACCEPTEDGENUS', 'ACCEPTEDSPECIES']
-typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
+typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
 specimenurl = ''
-typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
+typefield = 'HOMETYPE' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
-captionfield = "FULLNAME" #for image captions/descriptions
+captionfield = "CAPTION" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
 
 #copyrights, license, etc
