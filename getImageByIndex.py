@@ -8,3 +8,5 @@ fileext = '.tif'
 images = os.listdir(image_dir)
 images = list(filter(lambda x: x.endswith(fileext), images))
 slice = images[index : index + size]
+print('|'.join(slice))
+print('all done')
