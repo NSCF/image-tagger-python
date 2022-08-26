@@ -84,8 +84,14 @@ if df.empty:
     print('Quitting...')
     exit()
 
-print(df.shape[0], 'records read from', datafile)    
-df = df.set_index(specimenIdentifierField, drop = False)
+print(df.shape[0], 'records read from', datafile)   
+try: 
+    df = df.set_index(specimenIdentifierField, drop = False, verify_integrity = True)
+except ValueError:
+    print('There are duplicate values in the field', specimenIdentifierField)
+    print('Please remove the duplicates and try again.')
+    print('Quitting...')
+    exit()
 
 #check the file includes all the fields
 allfields = [*keywordfields, specimenurl, typefield, specimenIdentifierField, captionfield, sensitivefield]
@@ -199,13 +205,10 @@ for image in images:
         #for types we want to add keyword 'type' if the type is not already 'type'
         if typefield:
             typeval = imagerecord[typefield]
-            try:
-                if typeval and str(typeval) != 'nan' and typeval.strip() != '':
-                    if typeval.lower() != 'type':
-                        keywords.append(typeval)            
-                    keywords.append('type') #all types are tagged as 'type'
-            except Exception as e:
-                i = 0
+            if typeval and str(typeval) != 'nan' and typeval.strip() != '':
+                if typeval.lower() != 'type':
+                    keywords.append(typeval)            
+                keywords.append('type') #all types are tagged as 'type'
 
         if sensitivefield:
             keywords.append(imagerecord[sensitivefield])
