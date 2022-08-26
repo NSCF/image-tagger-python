@@ -22,9 +22,9 @@ keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIE
 typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
 specimenurl = ''
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME']
-typefield = '' #using this will also add the keywork 'type' to the images if this field has a value
+typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
-captionfield = "FULLNAME" #for image captions/descriptions
+captionfield = "HOMETYPE" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
 
 #copyrights, license, etc
@@ -45,14 +45,14 @@ startat = 900
 
 #path and filename of dataset containing the specimen data
 datafilepath = r'C:\general work\NSCF\TypeTagging' #keep this as a raw string so you don't have to escape the backslashes
-datafile = r'PRE_NonTypes_BODATSA_Aug_2022_2_OpenRefine.csv'
+datafile = r'PRE_Types_BODATSA_July_2022-OpenRefine.csv'
 
 #the directory with the images
 image_dir = r'G:\PRE' #use if data in a different location to images, else...
 #image_dir = datafilepath
 
 #do you want to write out any image files that were not found in the dataset?
-writemissing = True
+writemissing = False
 #writepath = r''
 writepath = datafilepath
 writefile = r'missingNonTypesAug2022_final.csv'
@@ -60,7 +60,7 @@ writefile = r'missingNonTypesAug2022_final.csv'
 #only tag files included in a list - meant to be used with the output from 'writemissing' above.
 #first column must be the file names, column name is ignored
 #make sure that the file names in the list have file extensions (they may have been removed from writefile in order to extract from a database)
-tagfromlist = True
+tagfromlist = False
 #listpath = r''
 listpath = datafilepath
 listfile = r'missingNonTypesAug2022.csv'
@@ -253,7 +253,7 @@ for image in images:
 
 
 #finish the exiftool process
-print(f'\r{blank * 30}')
+print(f'\r{blank * 30}', end = '')
 print('\rfinishing up.......', end = '')
 endcmd = f'-stay_open{os.linesep}0{os.linesep}'
 encmdencoded = endcmd.encode('utf-8')
@@ -274,12 +274,16 @@ else:
 #print any images where records not found in the dataset
 if len(recordsnotfound) > 0:
     print()
-    print('Could not find records for the following images:')
-    print('|'.join(recordsnotfound))
+
+    if len(recordsnotfound) > 20:
+        print('Records not found for',len(recordsnotfound), 'images')
+    else:
+        print('Could not find records for the following images:')
+        print('|'.join(recordsnotfound))
 
     if writemissing:
         print()
-        print('writing missing images to file...')
+        print('writing with missing records to file...')
         ofpath = os.path.join(writepath, writefile) #of = outfile
         newfile = not os.path.exists(ofpath)
         of = open(ofpath, 'a')
