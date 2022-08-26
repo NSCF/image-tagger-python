@@ -248,8 +248,7 @@ for image in images:
 
         count += 1
         if count % 5 == 0:
-            
-            print(f'\r{blank * 40}')
+            print(f'\r{blank * 40}', end ='')
             print(f'\r{count}', 'images tagged', end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
 
 
