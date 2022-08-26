@@ -44,7 +44,7 @@ startat = 900
 
 #path and filename of dataset containing the specimen data
 datafilepath = r'C:\general work\NSCF\TypeTagging' #keep this as a raw string so you don't have to escape the backslashes
-datafile = r'PRE_NonTypes_BODATSA_Aug_2022_2_OpenRefine.csv'
+datafile = r'PRE_Types-NonTypes_BODATSA_Aug_2022_combined_OpenRefine.csv'
 
 #the directory with the images
 image_dir = r'G:\PRE' #use if data in a different location to images, else...
@@ -59,7 +59,7 @@ writefile = r'missingNonTypesAug2022_final.csv'
 #only tag files included in a list - meant to be used with the output from 'writemissing' above.
 #first column must be the file names, column name is ignored
 #make sure that the file names in the list have file extensions (they may have been removed from writefile in order to extract from a database)
-tagfromlist = True
+tagfromlist = False
 #listpath = r''
 listpath = datafilepath
 listfile = r'missingNonTypesAug2022_final.csv'
@@ -274,8 +274,8 @@ else:
 if len(recordsnotfound) > 0:
     print()
 
-    if len(recordsnotfound) > 20:
-        print('Records not found for',len(recordsnotfound), 'images')
+    if len(recordsnotfound) > 100:
+        print('Records not found for', len(recordsnotfound), 'images')
     else:
         print('Could not find records for the following images:')
         print('|'.join(recordsnotfound))
