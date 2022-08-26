@@ -250,12 +250,14 @@ for image in images:
 
         count += 1
         if count % 5 == 0:
-            print(f'\r{blank * 40}', end ='')
-            print(f'\r{count}', 'images tagged', end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
+            end = time()
+            totaltime = strftime("%H:%M:%S", gmtime(end - start))
+            print(f'\r{blank * 50}', end ='')
+            print(f'\r{count}', 'images tagged in', totaltime, end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
 
 
 #finish the exiftool process
-print(f'\r{blank * 30}', end = '')
+print(f'\r{blank * 50}', end = '')
 print('\rfinishing up.......', end = '')
 endcmd = f'-stay_open{os.linesep}0{os.linesep}'
 encmdencoded = endcmd.encode('utf-8')
