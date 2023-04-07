@@ -32,6 +32,7 @@ licenseurl = "https://creativecommons.org/licenses/by/4.0/"
 rights = "Free to use for any purpose, including commercial purposes, with attribution. See License and AttributionName" #statement or URL
 attribution = "South African National Biodiversity Institute"
 attributionURL = "https://www.sanbi.org/"
+#TODO add photographer name
 
 #filetype to target
 fileext = '.tif'
