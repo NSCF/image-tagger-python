@@ -2,7 +2,6 @@
 
 #IMPORTS
 import subprocess
-import pandas as pd
 import os 
 from time import sleep, time, strftime, gmtime
 
