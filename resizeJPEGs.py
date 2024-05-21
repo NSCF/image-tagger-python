@@ -75,7 +75,8 @@ end = time.time()
 duration = end - start
 hours, rem = divmod(duration, 3600)
 minutes, seconds = divmod(rem, 60)
-print('Images resizing completed in', f"{round(hours):02}:{round(minutes):02}:{round(seconds):02}")
+print()
+print('Image resizing completed in', f"{round(hours):02}:{round(minutes):02}:{round(seconds):02}")
 
 print('all done...')
 
