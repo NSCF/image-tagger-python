@@ -7,7 +7,7 @@ from PIL import Image
 from progress.bar import Bar
 
 
-dir = r"D:\Herbarium images\Main Collection" # the directory to read
+dir = r"E:\Herbarium images\Quick Guide" # the directory to read
 prop = 0.90 # The proportional reduction 
 
 ### SCRIPT ####
@@ -16,12 +16,12 @@ if prop >= 1.0:
   print('Proportion must be less than 1')
   exit()
 
-jpegs = []
+jpegs = set()
 
 print('reading directory...')
 for file in os.listdir(dir):
   if file.lower().endswith(('.jpg', '.jpeg')):
-    jpegs.append(file)
+    jpegs.add(file)
 
 if len(jpegs) == 0:
   print('no jpeg files in this directory')
@@ -30,6 +30,17 @@ if len(jpegs) == 0:
 dest_dir = os.path.join(dir, 'small')
 if not os.path.exists(dest_dir):
   os.makedirs(os.path.join(dest_dir))
+
+# there may already be some images generated, and we want to skip those
+existing = set()
+for file in os.listdir(dest_dir):
+  if file.lower().endswith(('.jpg', '.jpeg')):
+    existing.add(file)
+
+jpegs = jpegs - existing
+if len(jpegs) == 0:
+  print('All files have already been converted')
+  exit()
 
 def process_image(jpeg, dir, dest_dir, prop, bar):
   img = Image.open(os.path.join(dir, jpeg))
