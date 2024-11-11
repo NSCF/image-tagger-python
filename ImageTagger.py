@@ -50,7 +50,7 @@ datafile = r'PRE_Types-NonTypes_BODATSA_Aug_2022_combined_OpenRefine.csv'
 image_dir = r'G:\PRE' #use if data in a different location to images, else...
 #image_dir = datafilepath
 
-#do you want to write out any image files that were not found in the dataset?
+#do you want to notify of any image files that were not found in the dataset?
 writemissing = False
 #writepath = r''
 writepath = datafilepath
