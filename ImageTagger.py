@@ -1,8 +1,10 @@
 # A basic script for tagging specimen images with selected data as keywords, e.g. country, taxon name, etc, 
-# as well tags for copyright, license, etc.
+# as well as tags for copyright, license, etc.
 
 # This script uses ExifTool.
 # Make sure ExifTool is installed and available on your PATH first: https://exiftool.org/
+
+# The dataset containing the keywords should have a field with the file names of the images you want to tag. See MakeImageRecords to generate this file.
 
 #IMPORTS
 import subprocess
@@ -24,6 +26,7 @@ typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the imag
 specimenurl = ''
 fileNameField = 'filename'
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
+titleField = specimenIdentifierField #for the image title fields, should be specimenIdentifierField by default
 captionfield = "CAPTION" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
 
@@ -98,7 +101,7 @@ except ValueError:
     exit()
 
 #check the file includes all the fields
-allfields = [*keywordfields, specimenurl, typefield, specimenIdentifierField, captionfield, sensitivefield]
+allfields = [*keywordfields, specimenurl, typefield, specimenIdentifierField, titleField, captionfield, sensitivefield]
 fieldsvals = [i for i in allfields if i is not None and i.strip() != '']
 
 missingfields = []
