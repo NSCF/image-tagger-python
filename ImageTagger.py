@@ -17,10 +17,11 @@ collectionname = 'National Herbarium'
 collectioncode = 'PRE'
 collectiontype = 'vascular plants' #vertebrate fossils, reptiles, insects, etc
 
-#fields to tag images with
+#fields from the dataset to tag images with
 keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIES', 'COLLECTOR LASTNAME', 'ACCEPTEDGENUS', 'ACCEPTEDSPECIES']
 typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
 specimenurl = ''
+fileNameField = 'filename'
 specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
 captionfield = "CAPTION" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
@@ -33,6 +34,8 @@ rights = "Free to use for any purpose, including commercial purposes, with attri
 attribution = "South African National Biodiversity Institute"
 attributionURL = "https://www.sanbi.org/"
 #TODO add photographer name
+#TODO add these values to the actual metadata field
+#TODO add creator field
 
 #filetype to target
 fileext = '.tif'
@@ -86,9 +89,9 @@ if df.empty:
 
 print(df.shape[0], 'records read from', datafile)   
 try: 
-    df = df.set_index(specimenIdentifierField, drop = False, verify_integrity = True)
+    df = df.set_index(fileNameField, drop = False, verify_integrity = True)
 except ValueError:
-    print('There are duplicate values in the field', specimenIdentifierField)
+    print('There are duplicate values in the field \'', fileNameField + '\'')
     print('Please remove the duplicates and try again.')
     print('Quitting...')
     exit()
@@ -173,10 +176,8 @@ recordsnotfound = []
 for image in images:
     if (image.endswith)(fileext):
 
-        identifier = image.replace(fileext, '')
-
         if tagfromlist and not filelist.empty:
-            if image not in filelist.index and identifier not in filelist.index:
+            if image not in filelist.index:
                 continue
         
         #the full file name and path
@@ -187,7 +188,7 @@ for image in images:
 
         #get the keywords
         try:
-            imagerecord = df.loc[identifier] #this searches using the index
+            imagerecord = df.loc[image] #this searches using the index
         except:
             recordsnotfound.append(image)
             continue
