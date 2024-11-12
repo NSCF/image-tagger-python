@@ -25,8 +25,8 @@ keywordfields = ['CONTINENT', 'COUNTRY', 'MAJORAREA', 'FAMILY', 'GENUS', 'SPECIE
 typefield = 'HOMETSTAT' #using this will also add the keywork 'type' to the images if this field has a value
 specimenurl = ''
 fileNameField = 'filename'
-specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber. Will be used for the title also
-titleField = specimenIdentifierField #for the image title fields, should be specimenIdentifierField by default
+specimenIdentifierField = "BARCODE" #the field that contains the identifier for the specimen in the image, e.g. catalogNumber
+titleField = specimenIdentifierField #for the image title fields, should be specimenIdentifierField by default but can be used for other fields too
 captionfield = "CAPTION" #for image captions/descriptions
 sensitivefield = '' #a field indicating sensitive taxa
 
@@ -37,9 +37,7 @@ licenseurl = "https://creativecommons.org/licenses/by/4.0/"
 rights = "Free to use for any purpose, including commercial purposes, with attribution. See License and AttributionName" #statement or URL
 attribution = "South African National Biodiversity Institute"
 attributionURL = "https://www.sanbi.org/"
-#TODO add photographer name
-#TODO add these values to the actual metadata field
-#TODO add creator field
+creator = "Natural Science Collections Facility"
 
 #filetype to target
 fileext = '.tif'
@@ -202,7 +200,7 @@ for image in images:
         recordsnotfound.append(image)
         continue
 
-    title = imagerecord[specimenIdentifierField]
+    title = imagerecord[titleField]
     
     caption = ''
     if captionfield:
@@ -243,7 +241,7 @@ for image in images:
     keywordsstring = ",".join(keywords)
     
     #tag the image
-    exiftoolcmd = f'-title={title}{os.linesep} -xmp:description={caption}{os.linesep} -copyright={copyright}{os.linesep} -license={licenseurl}{os.linesep} -usageterms={rights}{os.linesep} -attributionname={attribution}{os.linesep} -attributionurl={attributionURL}{os.linesep} -xmp:subject={keywordsstring}{os.linesep} -sep{os.linesep} ,{os.linesep} {imagepath}{os.linesep} -execute{count}{os.linesep}'
+    exiftoolcmd = f'-title={title}{os.linesep} -xmp:description={caption}{os.linesep} -copyright={copyright}{os.linesep} -license={licenseurl}{os.linesep} -usageterms={rights}{os.linesep} -attributionname={attribution}{os.linesep} -attributionurl={attributionURL}{os.linesep} -creator={creator}{os.linesep} -xmp:subject={keywordsstring}{os.linesep} -sep{os.linesep} ,{os.linesep} {imagepath}{os.linesep} -execute{count}{os.linesep}'
     encodedcmd = exiftoolcmd.encode('utf-8')
     exiftool.stdin.write(encodedcmd)
     exiftool.stdin.flush()
