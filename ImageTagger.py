@@ -9,6 +9,7 @@ import subprocess
 import pandas as pd
 import os 
 from time import sleep, time, strftime, gmtime
+from progress.bar import Bar
 
 #SETTINGS
 
@@ -112,7 +113,7 @@ if len(missingfields) > 0:
 
 ## read the directory of images, and slice if tagbatch == True
 images = os.listdir(image_dir)
-images = list(filter(lambda x: x.endswith(fileext), images))
+images = list(filter(lambda x: x.lower().endswith(fileext.lower()), images))
 
 if len(images)  == 0:
     print('No images with file type', fileext, 'at', image_dir)
@@ -173,96 +174,92 @@ blank = ' ' #for clearing printed values...
 ##loop through the images and add tags
 count = 0
 recordsnotfound = []
+bar = Bar('Processing', max = len(images))
 for image in images:
-    if (image.endswith)(fileext):
 
-        if tagfromlist and not filelist.empty:
-            if image not in filelist.index:
-                continue
-        
-        #the full file name and path
-        imagepath = os.path.join(image_dir, image)
-
-        #just for testing when we're trying to see if we reach the code below...
-        #continue
-
-        #get the keywords
-        try:
-            imagerecord = df.loc[image] #this searches using the index
-        except:
-            recordsnotfound.append(image)
+    if tagfromlist and not filelist.empty:
+        if image not in filelist.index:
+            bar.next()
             continue
-        
-        if imagerecord.empty: #I don't think this can happen, given the above...
-            recordsnotfound.append(image)
-            continue
+    
+    #the full file name and path
+    imagepath = os.path.join(image_dir, image)
 
-        title = imagerecord[specimenIdentifierField]
-        
-        caption = ''
-        if captionfield:
-          caption = imagerecord[captionfield]
-          
-        keywords = []
-        for field in keywordfields:
-            keywords.append(imagerecord[field])
+    #just for testing when we're trying to see if we reach the code below...
+    #continue
 
-        #for types we want to add keyword 'type' if the type is not already 'type'
-        if typefield:
-            typeval = imagerecord[typefield]
-            if typeval and str(typeval) != 'nan' and typeval.strip() != '':
-                if typeval.lower() != 'type':
-                    keywords.append(typeval)            
-                keywords.append('type') #all types are tagged as 'type'
+    #get the keywords
+    try:
+        imagerecord = df.loc[image] #this searches using the index
+    except:
+        recordsnotfound.append(image)
+        continue
+    
+    if imagerecord.empty: #I don't think this can happen, given the above...
+        recordsnotfound.append(image)
+        continue
 
-        if sensitivefield:
-            keywords.append(imagerecord[sensitivefield])
+    title = imagerecord[specimenIdentifierField]
+    
+    caption = ''
+    if captionfield:
+      caption = imagerecord[captionfield]
 
-        if license:
-            keywords.append(license)
-        if collectiontype:
-            keywords.append(collectiontype)
-        if collectionname:
-            keywords.append(collectionname)
-        if collectioncode:
-            keywords.append(collectioncode)
- 
-        #filter out nans/empty values and trim values
-        keywords = [x for x in keywords if str(x) != 'nan' and x!= None and x.strip() != '']
-        keywords = map(str.strip, keywords)
+    keywords = []
+    for field in keywordfields:
+        keywords.append(imagerecord[field])
 
-        #finally, get rid of any duplicate keywords...
-        keywords = set(keywords)
-        keywords = list(keywords)
+    #for types we want to add keyword 'type' if the type is not already 'type'
+    if typefield:
+        typeval = imagerecord[typefield]
+        if typeval and str(typeval) != 'nan' and typeval.strip() != '':
+            if typeval.lower() != 'type':
+                keywords.append(typeval)            
+            keywords.append('type') #all types are tagged as 'type'
 
-        keywordsstring = ",".join(keywords)
-        
-        #tag the image
-        exiftoolcmd = f'-title={title}{os.linesep} -xmp:description={caption}{os.linesep} -copyright={copyright}{os.linesep} -license={licenseurl}{os.linesep} -usageterms={rights}{os.linesep} -attributionname={attribution}{os.linesep} -attributionurl={attributionURL}{os.linesep} -xmp:subject={keywordsstring}{os.linesep} -sep{os.linesep} ,{os.linesep} {imagepath}{os.linesep} -execute{count}{os.linesep}'
-        encodedcmd = exiftoolcmd.encode('utf-8')
-        exiftool.stdin.write(encodedcmd)
-        exiftool.stdin.flush()
+    if sensitivefield:
+        keywords.append(imagerecord[sensitivefield])
 
-        #now read the output from exiftool until we get to the end of the response message
-        #we need this to keep the loop in sync with exiftool so we don't flood it
-        output = ""
-        newlines = 0
-        while newlines < 2: 
-            char = exiftool.stdout.read1(1)
-            output += char.decode('utf-8')
-            if os.linesep in output:
-                newlines += 1
-                output = ""
-        
-        exiftool.stdout.flush() #clear it so we can start on the next loop...
+    if license:
+        keywords.append(license)
+    if collectiontype:
+        keywords.append(collectiontype)
+    if collectionname:
+        keywords.append(collectionname)
+    if collectioncode:
+        keywords.append(collectioncode)
 
-        count += 1
-        if count % 5 == 0:
-            end = time()
-            totaltime = strftime("%H:%M:%S", gmtime(end - start))
-            print(f'\r{blank * 50}', end ='')
-            print(f'\r{count}', 'images tagged in', totaltime, end ='',  flush = True) #see https://stackoverflow.com/a/5419488/3210158, moved carriage return to the start
+    #filter out nans/empty values and trim values
+    keywords = [x for x in keywords if str(x) != 'nan' and x!= None and x.strip() != '']
+    keywords = map(str.strip, keywords)
 
+    #finally, get rid of any duplicate keywords...
+    keywords = set(keywords)
+    keywords = list(keywords)
+
+    keywordsstring = ",".join(keywords)
+    
+    #tag the image
+    exiftoolcmd = f'-title={title}{os.linesep} -xmp:description={caption}{os.linesep} -copyright={copyright}{os.linesep} -license={licenseurl}{os.linesep} -usageterms={rights}{os.linesep} -attributionname={attribution}{os.linesep} -attributionurl={attributionURL}{os.linesep} -xmp:subject={keywordsstring}{os.linesep} -sep{os.linesep} ,{os.linesep} {imagepath}{os.linesep} -execute{count}{os.linesep}'
+    encodedcmd = exiftoolcmd.encode('utf-8')
+    exiftool.stdin.write(encodedcmd)
+    exiftool.stdin.flush()
+
+    #now read the output from exiftool until we get to the end of the response message
+    #we need this to keep the loop in sync with exiftool so we don't flood it
+    output = ""
+    newlines = 0
+    while newlines < 2: 
+        char = exiftool.stdout.read1(1)
+        output += char.decode('utf-8')
+        if os.linesep in output:
+            newlines += 1
+            output = ""
+    
+    exiftool.stdout.flush() #clear it so we can start on the next loop...
+
+    count += 1
+    bar.next()
 
 #finish the exiftool process
 print(f'\r{blank * 50}', end = '')
