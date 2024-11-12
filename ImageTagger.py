@@ -198,7 +198,11 @@ for image in images:
             continue
 
         title = imagerecord[specimenIdentifierField]
-        caption = imagerecord[captionfield]
+        
+        caption = ''
+        if captionfield:
+          caption = imagerecord[captionfield]
+          
         keywords = []
         for field in keywordfields:
             keywords.append(imagerecord[field])
