@@ -6,6 +6,8 @@ import csv
 import re
 import pandas as pd
 
+### SETTINGS
+
 datafile_dir = r''
 datafile = r''
 image_catnum_field = '' # the field in the dataset that has catalog numbers formatted to match those in the file name - the joining field.
