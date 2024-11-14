@@ -108,10 +108,10 @@ if len(missingfields) > 0:
 
 print('making image tags dataset')
 rows = []
+missing = set()
 for image in images:
   
   catalognumber = image.split('_')[0]
-  data_record = df.loc[catalognumber]
 
   row = {
     "filename": image,
@@ -128,6 +128,12 @@ for image in images:
 
   row["views"] = ','.join(row['views'])
 
+  data_record = None
+  try:
+    data_record = df.loc[catalognumber]
+  except: #it can only be a key error
+    missing.add(catalognumber)
+    continue
 
 
   for keyword_field in keyword_fields:
@@ -136,11 +142,19 @@ for image in images:
 
   rows.append(row)
 
-print('saving image dataset file')
-with open(os.path.join(image_dir, ''), 'w', encoding='UTF8', newline='', errors='ignore') as f:
-  fields = ['filename', 'views']
-  dict_writer = csv.DictWriter(f, fields)
-  dict_writer.writeheader()
-  dict_writer.writerows(rows)
+if len(rows):
+  print('saving image dataset file')
+  with open(os.path.join(image_dir, ''), 'w', encoding='UTF8', newline='', errors='ignore') as f:
+    fields = ['filename', 'views']
+    dict_writer = csv.DictWriter(f, fields)
+    dict_writer.writeheader()
+    dict_writer.writerows(rows)
+
+  if len(missing):
+    print("The following specimens are not in the data file:")
+    for num in missing:
+      print(num)
+else:
+  print("no images matched records in the dataset")
 
 print('All done, bye bye now...')
