@@ -111,7 +111,7 @@ rows = []
 for image in images:
   
   catalognumber = image.split('_')[0]
-  data_record = df
+  data_record = df.loc[catalognumber]
 
   row = {
     "filename": image,
@@ -128,8 +128,11 @@ for image in images:
 
   row["views"] = ','.join(row['views'])
 
+
+
   for keyword_field in keyword_fields:
-    row[keyword_field] = df[keyword_field]
+    keyword_value = data_record[keyword_field]
+    row[keyword_field] = keyword_value
 
   rows.append(row)
 
