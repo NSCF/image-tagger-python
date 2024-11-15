@@ -179,7 +179,7 @@ for image in images:
 if len(rows):
   print('saving image dataset file')
   with open(os.path.join(image_dir, outputfile), 'w', encoding='UTF8', newline='', errors='ignore') as f:
-    fields = ['filename', 'views']
+    fields = ['filename', 'views', *keyword_fields]
     dict_writer = csv.DictWriter(f, fields)
     dict_writer.writeheader()
     dict_writer.writerows(rows)
