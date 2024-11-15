@@ -54,6 +54,13 @@ views = {
   'U': 'unspecified'
 }
 
+descriptors = {
+'G': 'group', 
+'V': 'view', 
+'S': 'section', 
+'I': 'image'
+}
+
 def make_view(code):
   '''make a full view description from the code'''
   if code and code.strip():
@@ -70,11 +77,20 @@ def make_view(code):
       except:
         raise Exception('invalid code')
     elif len(code) == 2:
-      try:
-        view.append(structures[code[0]])
-        view.append(views[code[1]])
-      except:
-        raise Exception('invalid code')
+      if any(char.isdigit() for char in code):
+
+        try:
+          view.append(descriptors[code[0]])
+          view.append(re.search(r'\d+', code))
+        except:
+          raise Exception('invalid code')
+      else:
+        
+        try:
+          view.append(structures[code[0]])
+          view.append(views[code[1]])
+        except:
+          raise Exception('invalid code')
     elif len(code) == 1:
       try:
         view.append(structures[code[0]])
