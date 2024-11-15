@@ -60,7 +60,9 @@ def make_view(code):
     code = code.upper().strip()
     view = []
 
-    if len(code) == 3: #we have a side
+    if code == "LABEL":
+      view.append('label')
+    elif len(code) == 3: #we have a side
       try:
         view.append(structures[code[0]])
         view.append(sides[code[1]])
@@ -177,7 +179,7 @@ for image in images:
   rows.append(row)
 
 if len(rows):
-  print('saving image dataset file')
+  print('saving image dataset file with', len(rows), 'records')
   with open(os.path.join(image_dir, outputfile), 'w', encoding='UTF8', newline='', errors='ignore') as f:
     fields = ['filename', 'views', *keyword_fields]
     dict_writer = csv.DictWriter(f, fields)
