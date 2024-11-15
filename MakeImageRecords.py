@@ -28,7 +28,7 @@ structures = {
   'H': 'head',
   'S': 'skin',
   'L': 'skull',
-  'C': 'cranium ',
+  'C': 'cranium',
   'M': 'mandible',
   'P': 'postcranium',
   'K': 'skeleton',
@@ -173,7 +173,7 @@ for image in images:
 
 
   for keyword_field in keyword_fields:
-    keyword_value = data_record[keyword_field]
+    keyword_value = data_record.get(keyword_field)
     if pd.isna(keyword_value):
         keyword_value = None
 
