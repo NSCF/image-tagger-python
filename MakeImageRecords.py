@@ -99,7 +99,7 @@ images = list(filter(lambda x: x.lower().endswith(fileext.lower()), images))
 print('reading data file...')
 fullpath = os.path.join(datafile_dir, datafile)
 try: 
-  df = pd.read_csv(fullpath)
+  df = pd.read_csv(fullpath, na_values=['', ' '], keep_default_na=False)
 except Exception as e:
   print(e)
   print('Quitting...')
@@ -173,9 +173,10 @@ for image in images:
 
 
   for keyword_field in keyword_fields:
-    keyword_value = data_record.get(keyword_field)
+    keyword_value = data_record[keyword_field]
     if pd.isna(keyword_value):
-        keyword_value = None
+      keyword_value = None
+    row[keyword_field] = keyword_value
 
   rows.append(row)
 
