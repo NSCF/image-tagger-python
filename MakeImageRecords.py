@@ -21,7 +21,6 @@ keyword_fields = [
 image_dir = r'G:\PRE' # the folder with the images; does not include subfolders
 outputfile = r'Iziko-mammals-types-2023.csv' # 
 fileext = '.tif'
-pad_length = 6
 
 # THE SCRIPT
 
@@ -36,9 +35,12 @@ structures = {
   'W': 'whole specimen'
 }
 
-views = {
+sides = {
   'L': 'left',
   'R': 'right',
+}
+
+views = {
   'D': 'dorsal',
   'V': 'ventral',
   'L': 'lateral',
@@ -57,18 +59,31 @@ def make_view(code):
   if code and code.strip():
     code = code.upper().strip()
     view = []
-    for codepart in enumerate(code):
-      if codepart in structures:
-        view.append(structures[codepart])
-      if codepart in views:
-        view.append(views[codepart])
-    
-    if len(views):
-      return ' '.join(views)
+
+    if len(code) == 3: #we have a side
+      try:
+        view.append(structures[code[0]])
+        view.append(sides[code[1]])
+        view.append(views[code[2]])
+      except:
+        raise Exception('invalid code')
+    elif len(code) == 2:
+      try:
+        view.append(structures[code[0]])
+        view.append(views[code[1]])
+      except:
+        raise Exception('invalid code')
+    elif len(code) == 1:
+      try:
+        view.append(structures[code[0]])
+      except:
+        raise Exception('invalid code')
+
     else:
-      return None
-  else:
-    return None
+      raise Exception('invalid code')
+
+    return ' '.join(view).strip()
+
 
 print('reading image directory')
 images = os.listdir(image_dir)
@@ -111,6 +126,7 @@ if len(missingfields) > 0:
 print('making image tags dataset')
 rows = []
 missing = set()
+code_errors = set()
 for image in images:
   
   catalognumber = image.split('_')[0]
@@ -123,10 +139,21 @@ for image in images:
   parts = re.split(r"[_\.]", image)
   parts.pop()
   parts = parts[1:]
+  has_code_errors =  False
   for part in parts:
-    view =  make_view(part)
+    
+    try:
+      view =  make_view(part)
+    except:
+      code_errors.add(image)
+      has_code_errors = True
+      continue
+    
     if view:
       row["views"].append(view)
+  
+  if has_code_errors:
+    continue
 
   row["views"] = ','.join(row['views'])
 
@@ -156,7 +183,17 @@ if len(rows):
     print("The following specimens are not in the data file:")
     for num in missing:
       print(num)
+
+  if len(code_errors):
+    print("The following images have code errors:")
+    for image in code_errors:
+      print(image)
 else:
-  print("no images matched records in the dataset")
+  if len(code_errors):
+    print("The following images have code errors:")
+    for image in code_errors:
+      print(image)
+  else:
+    print("no images matched records in the dataset")
 
 print('All done, bye bye now...')
