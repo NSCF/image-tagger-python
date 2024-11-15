@@ -78,14 +78,13 @@ def make_view(code):
         raise Exception('invalid code')
     elif len(code) == 2:
       if any(char.isdigit() for char in code):
-
         try:
           view.append(descriptors[code[0]])
-          view.append(re.search(r'\d+', code))
+          view.append(re.search(r'\d+', code)[0])
         except:
           raise Exception('invalid code')
       else:
-        
+
         try:
           view.append(structures[code[0]])
           view.append(views[code[1]])
