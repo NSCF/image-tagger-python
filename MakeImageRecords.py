@@ -86,7 +86,12 @@ def make_view(code):
 
 
 print('reading image directory')
-images = os.listdir(image_dir)
+try:
+  images = os.listdir(image_dir)
+except Exception as ex:
+  print('Opps! ' + str(ex))
+  exit()
+
 images = list(filter(lambda x: x.lower().endswith(fileext.lower()), images))
 
 print('reading data file...')
@@ -173,7 +178,7 @@ for image in images:
 
 if len(rows):
   print('saving image dataset file')
-  with open(os.path.join(image_dir, ''), 'w', encoding='UTF8', newline='', errors='ignore') as f:
+  with open(os.path.join(image_dir, outputfile), 'w', encoding='UTF8', newline='', errors='ignore') as f:
     fields = ['filename', 'views']
     dict_writer = csv.DictWriter(f, fields)
     dict_writer.writeheader()
