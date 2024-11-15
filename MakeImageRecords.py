@@ -174,10 +174,8 @@ for image in images:
 
   for keyword_field in keyword_fields:
     keyword_value = data_record[keyword_field]
-    if keyword_value:
-      row[keyword_field] = keyword_value
-    else: 
-      row[keyword_field] = None
+    if pd.isna(keyword_value):
+        keyword_value = None
 
   rows.append(row)
 
