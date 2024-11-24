@@ -31,6 +31,7 @@ structures = {
   'C': 'cranium',
   'M': 'mandible',
   'P': 'postcranium',
+  'B': 'long bone',
   'K': 'skeleton',
   'W': 'whole specimen'
 }

@@ -6,6 +6,8 @@
 
 # The dataset containing the keywords should have a field with the file names of the images you want to tag. See MakeImageRecords to generate this file.
 
+# Note that you shouldn't have any fields with True and False values in your keywords dataset, as these 
+
 #IMPORTS
 import subprocess
 import pandas as pd
