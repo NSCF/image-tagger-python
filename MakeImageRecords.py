@@ -27,12 +27,12 @@ fileext = '.tif'
 
 print('reading image directory')
 try:
-  images = os.listdir(image_dir)
+  dir_contents = os.listdir(image_dir)
 except Exception as ex:
-  print('Opps! ' + str(ex))
+  print('Oops! ' + str(ex))
   exit()
 
-images = list(filter(lambda x: x.lower().endswith(fileext.lower()), images))
+images = list(filter(lambda x: x.lower().endswith(fileext.lower()), dir_contents))
 
 print('reading data file...')
 fullpath = os.path.join(datafile_dir, datafile)

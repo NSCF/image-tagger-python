@@ -7,12 +7,12 @@ fileext = '.tif'
 
 print('reading image directory')
 try:
-  images = os.listdir(image_dir)
+  dir_contents = os.listdir(image_dir)
 except Exception as ex:
   print('Oops! ' + str(ex))
   exit()
 
-images = list(filter(lambda x: x.lower().endswith(fileext.lower()), images))
+images = list(filter(lambda x: x.lower().endswith(fileext.lower()), dir_contents))
 code_errors = set()
 for image in images:
   parts = re.split(r"[_\.]", image)

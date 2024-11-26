@@ -1,3 +1,5 @@
+import re
+
 structures = {
   'H': 'head',
   'S': 'skin',
