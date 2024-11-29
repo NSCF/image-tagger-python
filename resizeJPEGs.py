@@ -7,7 +7,7 @@ from PIL import Image
 from progress.bar import Bar
 
 
-dir = r"E:\Herbarium images\Quick Guide" # the directory to read
+dir = r"E:\Herbarium imaging\Moss\JPEG\Main Collection" # the directory to read
 prop = 0.90 # The proportional reduction 
 
 ### SCRIPT ####
